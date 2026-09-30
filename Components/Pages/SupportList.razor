@@ -1,0 +1,55 @@
+@page "/support-list"
+@rendermode InteractiveServer
+@using SupportWebApp.Models
+@using SupportWebApp.Services
+@inject CosmosService Cosmos
+
+<PageTitle>Henvendelser</PageTitle>
+
+<h1>Henvendelser</h1>
+
+@if (messages == null)
+{
+    <p>Indlæser...</p>
+}
+else if (!messages.Any())
+{
+    <p>Ingen henvendelser fundet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Navn</th>
+            <th>Email</th>
+            <th>Telefon</th>
+            <th>Kategori</th>
+            <th>Beskrivelse</th>
+            <th>Oprettet</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var m in messages)
+        {
+            <tr>
+                <td>@m.Name</td>
+                <td>@m.Email</td>
+                <td>@m.Phone</td>
+                <td>@m.Category</td>
+                <td>@m.Description</td>
+                <td>@m.CreatedAt.ToLocalTime().ToString("g")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<SupportMessage>? messages;
+
+    protected override async Task OnInitializedAsync()
+    {
+        messages = await Cosmos.GetAllAsync();
+    }
+}
